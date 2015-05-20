@@ -17,6 +17,8 @@ int slider2;
 int last_slider1 = 0;
 int last_slider2 = 0;
 
+TCPClient client;
+
 void setup(void)
 {
   Serial.begin(9600);
@@ -45,13 +47,10 @@ void loop()
 
 bool update_lights(String light_id, int slider_val, int last_slider_val)
 {
-  if (abs(slider_val - last_slider_val) > GRANULARITY)
+  if (abs(slider_val - last_slider_val) >= GRANULARITY)
   {
-    TCPClient client;
-    client.connect(HUE_HUB_IP_ADDRESS_BYTES, 80);
-
-    if (client.connected()) {
-
+    if (client.connect(HUE_HUB_IP_ADDRESS_BYTES, 80))
+    {
       char* content = light_json(slider_val);
 
       char* req;
@@ -66,6 +65,7 @@ bool update_lights(String light_id, int slider_val, int last_slider_val)
       client.println(req);
       client.println(host);
       client.println("Content-Type: application/json");
+      client.println("Connection: close");
       client.println(content_length);
       client.println();
       client.println(content);
@@ -73,6 +73,7 @@ bool update_lights(String light_id, int slider_val, int last_slider_val)
       Serial.println(req);
       Serial.println(host);
       Serial.println("Content-Type: application/json");
+      Serial.println("Connection: close");
       Serial.println(content_length);
       Serial.println();
       Serial.println(content);
