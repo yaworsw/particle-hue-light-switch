@@ -11,8 +11,6 @@
 #define GRANULARITY      200
 #define MAX_SLIDER_VALUE 4017
 
-byte server[] = { 192, 168, 1, 92 };
-
 int slider1;
 int slider2;
 
@@ -47,47 +45,46 @@ void loop()
 
 bool update_lights(String light_id, int slider_val, int last_slider_val)
 {
-  return false;
   if (abs(slider_val - last_slider_val) > GRANULARITY)
   {
     TCPClient client;
     client.connect(HUE_HUB_IP_ADDRESS_BYTES, 80);
 
-    // if (client.connected()) {
+    if (client.connected()) {
 
-    //   char* content = light_json(slider_val);
+      char* content = light_json(slider_val);
 
-    //   char* req;
-    //   asprintf(&req, "PUT /api/%s/lights/%s/state HTTP/1.0", HUE_DEVELOPER_NAME, light_id.c_str());
+      char* req;
+      asprintf(&req, "PUT /api/%s/lights/%s/state HTTP/1.0", HUE_DEVELOPER_NAME, light_id.c_str());
 
-    //   char* host;
-    //   asprintf(&host, "Host: %s", HUE_HUB_IP_ADDRESS);
+      char* host;
+      asprintf(&host, "Host: %s", HUE_HUB_IP_ADDRESS);
 
-    //   char* content_length;
-    //   asprintf(&content_length, "Content-Length: %i", strlen(content));
+      char* content_length;
+      asprintf(&content_length, "Content-Length: %i", strlen(content));
 
-    //   client.println(req);
-    //   client.println(host);
-    //   client.println("Content-Type: application/json");
-    //   client.println(content_length);
-    //   client.println();
-    //   client.println(content);
+      client.println(req);
+      client.println(host);
+      client.println("Content-Type: application/json");
+      client.println(content_length);
+      client.println();
+      client.println(content);
 
-    //   Serial.println(req);
-    //   Serial.println(host);
-    //   Serial.println("Content-Type: application/json");
-    //   Serial.println(content_length);
-    //   Serial.println();
-    //   Serial.println(content);
+      Serial.println(req);
+      Serial.println(host);
+      Serial.println("Content-Type: application/json");
+      Serial.println(content_length);
+      Serial.println();
+      Serial.println(content);
 
-    //   client.flush();
-    //   client.stop();
-    // }
-    // else
-    // {
-    //   Serial.println("Connection failed");
-    //   return false;
-    // }
+      client.flush();
+      client.stop();
+    }
+    else
+    {
+      Serial.println("Connection failed");
+      return false;
+    }
 
     return true;
   }
